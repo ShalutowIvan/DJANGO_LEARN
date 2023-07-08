@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*t1me@r4#mez#@%34z7tdt(5!kaim+p7+o2lj9!3n7z4n--%tr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False#это константа для режима отладки. Если тру значит мы в режиме отладки, если фолз то режим отладки будет отключен. Посмотрим что будет отображатсья вместо страници с ошибкой 404. в консоли будет ошибка "CommandError: You must set settings.ALLOWED_HOSTS if DEBUG is False." . Нужно в ALLOWED_HOSTS указать разрешенный хост
+# DEBUG = False#это константа для режима отладки. Если тру значит мы в режиме отладки, если фолз то режим отладки будет отключен. Посмотрим что будет отображатсья вместо страници с ошибкой 404. в консоли будет ошибка "CommandError: You must set settings.ALLOWED_HOSTS if DEBUG is False." . Нужно в ALLOWED_HOSTS указать разрешенный хост
+DEBUG = True#это загрузок фото, чтобы мы могли редачить ссылку
+
 
 ALLOWED_HOSTS = ["127.0.0.1"]#теперь будет отображаться страница Not Found, это более понятно для пользователя, без служебной инфы. Также можно прописать специальный обработчик для страницы 404 в файле urls.py в папке с пакетом проекта, но не приложения
 
@@ -122,3 +125,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')#тут формируется путь к каталогу media для сохранения фото
+MEDIA_URL = '/media/'#это добавление префикса к url графических файлов
+
+
+

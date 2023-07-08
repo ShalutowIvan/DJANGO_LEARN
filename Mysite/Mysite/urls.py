@@ -14,12 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 # from home.views import index, categories
 from home.views import *
 from django.urls import path, include
-
+from Mysite import settings
 
 #тут нужно добавить маршрут. Пока тут только обращение к админке 
 urlpatterns = [
@@ -40,5 +41,13 @@ urlpatterns = [
 # также можно указывать и список маршрутов приложения from django.urls import path, include. А все остальные ссылки path можно убрать. Префикс будет тянуться из папки с проектом
 
 # убрали ссылку на приложение, теперь все маршруты будут идти от доменного имени
+
+
+
+if settings.DEBUG:#в случае включенного режима дебага то есть DEBUG=True мы к маршрутам urlpatterns которые мы указали выше добавляем маршрут для статических данных графических файлов и указываем наш добавленный урл и корневую папку где будут храниться файлы, скорее всего static это функция такая. Делается это только в отладочном режиме, на реальных серверах это уже настроено, но у нас не настроено. static надо импортировать из django.conf.urls.static. DEBUG должен быть True. Теперь тестовый сервер может их брать по адресу media и отображать на html странице
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
 
 handler404 = pageNotFound#эту функцию нужно импортировать из папки с приложением из файла views.py
