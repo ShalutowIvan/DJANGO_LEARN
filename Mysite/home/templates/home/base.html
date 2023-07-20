@@ -16,14 +16,14 @@
 {% block mainmenu %}
 		<div class="header">
 			<ul id="mainmenu" class="mainmenu">
-			<li class="logo"><a href="{% url 'home' %}"><div class="logo"></div></a></li>
+			<li class="logo"><a href="{% url 'main' %}"><div class="logo"></div></a></li>
 			<!-- ссылку пока не прописывали вместо нее #. То есть тут пока только меню общее и внизу можно будет добавлять в блок контент нужный нам контент, а это пока только база-->
 
 {% for m in menu %}
 	{% if not forloop.last %}
-			<li><a href="#">{{m.title}}</a></li>
+			<li><a href="{% url m.url_name %}">{{m.title}}</a></li>
 	{% else %}
-			<li class="last"><a href="#">{{m.title}}</a></li>
+			<li class="last"><a href="{% url m.url_name %}">{{m.title}}</a></li>
 	{% endif %}
 {% endfor %}
 			</ul>
