@@ -16,7 +16,7 @@
 {% block mainmenu %}
 		<div class="header">
 			<ul id="mainmenu" class="mainmenu">
-			<li class="logo"><a href="#"><div class="logo"></div></a></li>
+			<li class="logo"><a href="{% url 'home' %}"><div class="logo"></div></a></li>
 			<!-- ссылку пока не прописывали вместо нее #. То есть тут пока только меню общее и внизу можно будет добавлять в блок контент нужный нам контент, а это пока только база-->
 
 {% for m in menu %}
