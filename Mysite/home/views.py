@@ -18,10 +18,10 @@ menu = [{'title': "О сайте", "url_name": "about"},
 
 def index(request):
 	posts = Home.objects.all()#считали все записи из БД и сохранили ее в переменную posts и его нужно передать в словарь в функции render. В html файлах через шаблонизатор мы также перебираем наш список posts, и так как каждый элемент списка это объект со свойствами мы там обращаемся к свойставам объекта в цикле и все на странице отображается. Также фреймворк джанго через функцию all подключается к БД и отключается, больше ничего писать тут не нужно
-	cats = Category.objects.all()#считали записи из таблицы категории
+	# cats = Category.objects.all()#считали записи из таблицы категории
 	context = {
 		"posts": posts,
-		'cats': cats,
+		# 'cats': cats,
 		"menu": menu,
 		'title': 'Главная страница',
 		'cat_selected': 0#далее модифицируем функцию show_categories, чтобы отображать статьи по отдельным рубрикам.
@@ -100,14 +100,14 @@ def show_post(request, postid):
 
 def show_category(request, cat_id):
 	posts = Home.objects.filter(cat_id=cat_id)#фильтруем по cat_id которые передаем в запросе
-	cats = Category.objects.all()
+	# cats = Category.objects.all()
 
 	if len(posts) == 0:#это нужно, чтобы в случае когда нет постов, то была бы ошибка 404
 		raise Http404()
 
 	context = {
 		"posts": posts,
-		'cats': cats,
+		# 'cats': cats,
 		"menu": menu,
 		'title': 'Отображение по рубрикам',
 		'cat_selected': cat_id, #далее модифицируем функцию show_categories, чтобы отображать статьи по отдельным рубрикам.

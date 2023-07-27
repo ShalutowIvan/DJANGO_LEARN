@@ -39,8 +39,8 @@
 <tr>
 <!-- Sidebar слева -->
 	<td valign="top" class="left-chapters">
-		<!-- вызовет тут функцию тега -->
-		{% get_categories %}
+		<!-- вызовет тут функцию тега {% getcats as categories %}-->
+		
 
 	<ul id="leftchapters">
 {% if cat_selected == 0 %}
@@ -48,14 +48,22 @@
 {% else %}
 		<li><a href="{% url 'main' %}">Все категории</a></li>
 {% endif %}
-
-{% for c in cats %}
+<!--
+{% for c in categories %}
 	{% if c.pk == cat_selected %}
 		<li class="selected">{{c.name}}</li>
 	{% else %}
 		<li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
 	{% endif %}
 {% endfor %}
+ -->
+
+<!--
+{% show_categories %}
+-->
+{% show_categories 'name' cat_selected %}<!--передали 2 параметра функции show_categories, для фильтрации и для сортировки, cat_selected доступна из кода выше. в шаблонах лучше передавать значения параметров через присвоение для названий параметров, а не просто список значений  -->
+ 
+
 
 <li class="share">
 		<p>Наш канал</p>
