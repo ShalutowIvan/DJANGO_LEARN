@@ -11,6 +11,7 @@ class HomeAdmin(admin.ModelAdmin):#называем класс по назван
     search_fields = ('title', 'content')#это инфа по каким полям будет идти поиск. Далее идем в файл models.py для уазания названия полей на русском языке. 
     list_editable = ('is_published',)#это чтобы через админку можно было редачить этот параметр
     list_filter = ('is_published', 'time_create')#для фильтра по этим параметрам в админке
+    prepopulated_fields = {"slug": ("title",)}
 
 #потом регистрируем нужную нам модель
 admin.site.register(Home, HomeAdmin)#также сюда нужно передать класс админа
@@ -20,6 +21,8 @@ class CategoryAdmin(admin.ModelAdmin):#по аналогии пропишем д
     list_display = ('id', 'name')
     list_display_links = ('id', 'name')
     search_fields = ('name',)#обязательно нужно передавать кортеж, а не просто строку в скобках
+    prepopulated_fields = {"slug": ("name", )}
+
 
 
 admin.site.register(Category, CategoryAdmin)#и зарегаем котегории. Далее также в модели перейдем и добюавим класс Meta

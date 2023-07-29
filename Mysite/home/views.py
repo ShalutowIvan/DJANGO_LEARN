@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 
 
@@ -95,11 +95,29 @@ def login(request):
 	return HttpResponse("Авторизация")
 
 
-def show_post(request, postid):
-	return HttpResponse(f"Отображение статьи с номером = {postid}")
+def show_post(request, post_slug):
+	post = get_object_or_404(Home, slug=post_slug)#эта функция ищет в БД запись с нужным нам параметром pk, который мы передаем в функцию. Если он не найдется то будет ошибка 404. Эту функцию get_object_or_404 также нужно импортировать из django.shortcuts
+ 
+	context = {
+        'post': post,
+        'menu': menu,
+        'title': post.title,
+        'cat_selected': post.cat_id,#post это объект класса Home со свойствами, и у него есть свойство cat_id. Из-за этого параметра шаблон знает какую группу сделать выбранной
+    }#это словарь из параметров, которые будем передавать шаблону post.html. Далее сделаем шаблон post.html. 
+ 
+	return render(request, 'home/post.html', context=context)
 
-def show_category(request, cat_id):
-	posts = Home.objects.filter(cat_id=cat_id)#фильтруем по cat_id которые передаем в запросе
+#теперь сделаем отображение статей по слагу, идем в файл models.py и добавляем туда поле слаг в БД. Удалим миграции чтобы заново сформировать БД. сам файл БД тоже надо удалить при добавлении новых полей. И также в поле cat уберем параметр Null. И после создания БД надо также создать суперпользователя. ВОбщем слаг это строка в адресной строке и ее пишем в БД, то есть часть ссылки на страницу записывается в БД. Также чтобы поле слаг, ссылка то есть, заполнялась автоматом в админке джанго на основании имени при добавлении поля, можно в файле admin.py указать строку prepopulated_fields = {"slug": ("name", )} в классе CategoryAdmin. Также можно и корректировать урл-ку.
+#для таблицы home также сделаем такую штуку для автозаполнения урлки из админки. Далее заполним бд через админку. Потом также нужно сделать так чтобы в строке ссылки отображался слаг вместо цифры, чтобы слаг подтягивался из БД. Идем в файл urls.py в папке с приложением. Тип данных в post нужно поставить slug вместо int, и название переменной поменяем на post_slug. Также в функции show_post нужно заменить название переменных. И фильтр тоже сделаем по полю slug. Также в файле моделей нужно изменить get_absolute_url, также слаги прописать. Переделать по слагу и категории, у меня пока не получилось.
+
+
+
+
+
+
+
+def show_category(request, cat_slug):
+	posts = Home.objects.filter(slug=cat_slug)#фильтруем по cat_id которые передаем в запросе
 	# cats = Category.objects.all()
 
 	if len(posts) == 0:#это нужно, чтобы в случае когда нет постов, то была бы ошибка 404
