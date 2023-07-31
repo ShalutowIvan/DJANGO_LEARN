@@ -3,9 +3,37 @@
 {% block content %}
 <h1>{{title}}</h1>
 <!-- создали форму, и написали атрибут action, он указывает на то какую урл мы будет тут использовать. Перенаправление будет идти на ту же самую страницу. и далее указали метод post, он безопаснее, и лучше его использовать. То есть для передачи данных используют метод post  -->
-<form action="{% url 'add_page' %}" method="post">
+<form action="{% url 'add_page' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}<!--csrf_token это тег служит для защиты от злоумышленников, то есть бывает когда форму для ввода логина и пароля могут перехватить и пользователь введет логи и пароль на сайте злоумышленника, и в дажнго есть такой механизм защиты, этот токен генерируется каждый раз при обновлении страницы и потом если этот токен не совпадает то форма работать не будет. Этот тег всегда здесь пишется    -->
-    {{ form.as_p }}<!-- form.as_p позволяет отображать все поля формы через тег обзаца p. as_p это функция, но в шаблонизаторе мы не пишем скобки, так как шаблонизатор сам ее вызовет  -->
+
+    <!--{{ form.as_p }}-->
+        <!-- form.as_p позволяет отображать все поля формы через тег обзаца p. as_p это функция, но в шаблонизаторе мы не пишем скобки, так как шаблонизатор сам ее вызовет  -->
+    <!-- закоментировали теперь form.as_p и перепишем ее в более луший вид-->
+    
+    <!--<p><label class="form-label" for="{{ form.title.id_for_label }}">{{form.title.label}}: </label>{{ form.title }}</p>
+    <div class="form-error">{{ form.title.errors }}</div>-->
+    <!-- в форме будет заголовок. В нем сам джанго дописывает параметры для ввода поля. Далее пропишем поля ввода для других полей -->
+    <!-- p><label class="form-label" for="{{ form.slug.id_for_label }}">{{form.slug.label}}: </label>{{ form.slug }}</p>
+    <div class="form-error">{{ form.slug.errors }}</div>
+    <p><label class="form-label" for="{{ form.content.id_for_label }}">{{form.content.label}}: </label>{{ form.content }}</p>
+    <div class="form-error">{{ form.content.errors }}</div>
+    <p><label class="form-label" for="{{ form.is_published.id_for_label }}">{{form.is_published.label}}: </label>{{ form.is_published }}</p>
+    <div class="form-error">{{ form.is_published.errors }}</div> 
+    <p><label class="form-label" for="{{ form.cat.id_for_label }}">{{form.cat.label}}: </label>{{ form.cat }}</p>
+    <div class="form-error">{{ form.cat.errors }}</div>-->
+<!-- лучше это все прописать циклом, код ниже, это будет тоже самое -->
+
+<!-- это отображение ошибки при заполнении не верных данных  -->
+<div class="form-error">{{ form.non_field_errors }}</div>
+
+{% for f in form %}
+<p><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
+<div class="form-error">{{ f.errors }}</div>
+{% endfor %}
+<!-- стили будут везде одинаковые. Но можно сделать разные через специалтнй параметр widget, его нужно прописать в файле forms.py? мы прописали его только для поля title -->
+
+
+
     <button type="submit">Добавить</button><!-- это просто кнопка добавить -->
 </form>
 <!-- далее идем в файл views.py , в функцию addpage-->
