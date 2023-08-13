@@ -10,11 +10,11 @@ urlpatterns = [
 	# path('chan/<slug:chang>/', changes),#http://127.0.0.1:8000/home/chan
 	# re_path(r'^archive/(?P<year>[0-9]{4})/', archive)#тут мы пишем, что должен идти префикс archive и год состоящий из 4 цифр и функция обработчик archive. Также в представлениях файл views.py нужно прописать функцию. Ссылка теперь будет. Год должен быть именно из 4-х цифр. Мы переделали начальную ссылку в корневом файл urls, поэтому теперь все ссылки начинаются с доменного имени, home писать не нужно. r стркоа убирает все спец символы в строке, то есть не работают и действуют как обычная строка
 	path('about/', about, name='about'),
-	path('add_page/', add_page, name='add_page'),
+	path('add_page/', AddPage.as_view(), name='add_page'),
 	path('contact/', contact, name='contact'),
 	path('login/', login, name='login'),
-	path('post/<slug:post_slug>/', show_post, name='post'),
-	path('category/<slug:cat_slug>/', show_category, name='category')
+	path('post/<slug:post_slug>/', ShowPost.as_view(), name='post'),
+	path('category/<slug:cat_slug>/', HomeCategory.as_view(), name='category')
 
 ]
 
