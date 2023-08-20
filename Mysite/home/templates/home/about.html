@@ -3,6 +3,21 @@
 
 {% block content  %}
 <h1>{{title}}</h1>
-<p>Содержимое страницы "О приложении"
+
+{% for contact in page_obj %}
+<p>{{ contact }}</p>
+{% endfor %}
+
+<!-- тут мы сделали вывод номеров страниц. Перебрали итератор с номерами страниц, и в ссылку передали текст ?page= + номер страницы  -->
+<nav>
+    <ul>
+        {% for p in page_obj.paginator.page_range %}
+        <li>
+            <a href="?page={{ p }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+
 {% endblock %}
 
