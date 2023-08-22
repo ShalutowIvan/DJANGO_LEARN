@@ -1,4 +1,7 @@
 from django.urls import path, re_path#обяз нужно импортировать функцию path из пакета джанго
+from django.views.decorators.cache import cache_page#импортировали функцию для кеширования. и теперь в маршуртах можно прописать декоратор. Его можно прописать для функций, писать его нужно перед функциями и функцию или класс представления нужно взять в скобки, и также прпоисать время кеширования. Пример ниже в списке urlpatterns, сначала сделаем кеширование для главной страницы.
+
+
 
 from .views import *#импортируем все функции представления из файла views, это функции для ссылок нашего приложения.
 #потом делаем список ссылок urlpatterns
@@ -13,6 +16,7 @@ urlpatterns = [
 	path('add_page/', AddPage.as_view(), name='add_page'),
 	path('contact/', contact, name='contact'),
 	path('login/', LoginUser.as_view(), name='login'),
+	path('logout/', logout_user, name='logout'),
 	path('register/', RegisterUser.as_view(), name='register'),
 	path('post/<slug:post_slug>/', ShowPost.as_view(), name='post'),
 	path('category/<slug:cat_slug>/', HomeCategory.as_view(), name='category')

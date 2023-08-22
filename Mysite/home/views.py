@@ -1,3 +1,4 @@
+from django.contrib.auth import logout, login
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
@@ -57,7 +58,8 @@ class HomeHome(DataMixin, ListView):#создали класс списка пр
 	#еще можно сделать так чтобы из таблицы выбирались не все записи, а например только опубликованные, то есть получается фильтр можно сделать. Для этого нужно дполнительно прописать функцию get_queryset и указать в ней фильтр.
 
 	def get_queryset(self):
-		return Home.objects.filter(is_published=True)#будут выведены только те статьи которые опубликованы. Далее пропишем класс для функци отображения категорий.
+		return Home.objects.filter(is_published=True).select_related('cat')#будут выведены только те статьи которые опубликованы. Далее пропишем класс для функци отображения категорий.
+		#тут совместно с запиясми будут загружены и данные из таблицы категории. Указали именно 'cat' потому что этот ключ связывает модели Home с моделью категории. Теперь так как мы сделали дполнительно жадный запрос, то дополнительнйы sql запрос делаться не будет.
 
 
 # def index(request):
@@ -281,8 +283,10 @@ class HomeCategory(DataMixin, ListView):
 	context_object_name = 'posts'
 	allow_empty = False
 
+	# .select_related('cat')
+
 	def get_queryset(self):
-		return Home.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True)#выбираем только те категории которые соответствуют указанному слагу.
+		return Home.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True).select_related('cat')#выбираем только те категории которые соответствуют указанному слагу.
 	#через переменную kwargs можно получать все параметры маршрута, то есть это словарь и по ключам можно обращаться к переменным. Тут будут выбраны все записи у которых слаг совпадает со слагом категории. То есть выбранная категория совпадает с категорией записи из таблицы. И еще статья должна быть опубликована.
 	# У модели Home есть параметр cat который ссылается на модель категорий, cat__slug это означает что мы обращаемся к полю slug таблицы категорий. Такж в urls.py нужно прописать название метода HomeCategory.as_view()
 
@@ -294,8 +298,10 @@ class HomeCategory(DataMixin, ListView):
 
 		# убрали лишние строки сверху. И пропишем функцию из базового класса
 		context = super().get_context_data(**kwargs)
-		c_def = self.get_user_context(title='Категория - ' + str(context['posts'][0].cat), cat_selected=context['posts'][0].cat_id)#переделали тоже самое под нашу функцию из миксина
-
+		# c_def = self.get_user_context(title='Категория - ' + str(context['posts'][0].cat), cat_selected=context['posts'][0].cat_id)#переделали тоже самое под нашу функцию из миксина
+		c = Category.objects.get(slug=self.kwargs['cat_slug'])
+		c_def = self.get_user_context(title='Категория - ' + str(c.name), cat_selected=c.pk)
+		# c_def = self.get_user_context(title="Главная страница")
 		return dict(list(context.items()) + list(c_def.items()))
 		# далее сделаем класс DetailView для отображения конкретной страницы, в нашем случае для отображения страницы постов. заменим функцию show_post
 
@@ -321,11 +327,15 @@ class RegisterUser(DataMixin, CreateView):
 
 	#теперь сделаем свою форму в файле forms.py. Форма из джанго немного кривая. 
 
+	def form_valid(self, form):#вызывается при успешной проверке формы регистрации для атворизации.
+		user = form.save()#тут идет сохранение пользователя в БД
+		login(self.request, user)#тут идет авторизация зарегистрированного пользователя. Функция login нужно импортировать.
+		return redirect('main')#после авторизации мы перенаправляем польщователя на главную страницу.
 
 
 class LoginUser(DataMixin, LoginView):
-	form_class = LoginUserForm#AuthenticationForm это стандатная форма авторизации. Ее тоже имортируем. 
-	template_name = 'home/login.html'#указали также шаблон. Также пропишем в нем нужный код, то есть кнопку и запуск функции. В джанго это уже все реализовано, только нет функции обработчика для перенправления после авторизации. Нужно прописать метод get_success_url для перенаправления. Потом мы уберем AuthenticationForm, и заменим ее на свою форму LoginUserForm. Также перепишем вывод формы через цикл, чтобы лучше все выглядело. 
+	form_class = LoginUserForm#AuthenticationForm это стандатная форма авторизации. Ее тоже имортируем. Теперь вместо нее укажем нашу форму LoginUserForm.
+	template_name = 'home/login.html'#указали также шаблон. Также пропишем в нем нужный код, то есть кнопку и запуск функции. В джанго это уже все реализовано, только нет функции обработчика для перенправления после авторизации. Нужно прописать метод get_success_url для перенаправления. Потом мы уберем AuthenticationForm, и заменим ее на свою форму LoginUserForm. Также перепишем вывод формы через цикл, чтобы лучше все выглядело. Также сделаем теги для отображения ошибок при авторизации пользователей. Эти ошибки есть в коллекции non_field_errors если ошибка связана не с полем, и errors если ошибка связана с полем. Теперь еще сделаем так чтобы после входа не было кнопок войти и регистрация, а была кнопка выйти и приветствие какое-то. Перейдем для этого в базовый шаблон base.html и кнопки. Также нужно прописать в urls.py маршрут path и функцию представления для выхода, функцию назовем logout_user. Сделаем еще автоматическую авторизацию после регистрации пользователя. Это нужно сделать в нашем классе RegisterUser и пропишем там метод form_valid, он вызывается при успешной проверки формы регистрации.
  
 	def get_context_data(self, *, object_list=None, **kwargs):
 		context = super().get_context_data(**kwargs)
@@ -338,3 +348,8 @@ class LoginUser(DataMixin, LoginView):
 
 # Еще у нашего пользователя может не быть прав на админку. 
 #сделаем улучше отображения формы авторизации. Перейдем в файл forms.py. 
+
+
+def logout_user(request):#функция для выхода, чтобы выйти из аккаунта
+    logout(request)#эта функция вызывает стандартную функцию джанго для выхода пользователя.
+    return redirect('login')#тут редирект на маршрут login, он у нас в виде класса прописан. Сделаем еще автоматическую авторизацию после регистрации пользователя. Это нужно сделать в нашем классе RegisterUser

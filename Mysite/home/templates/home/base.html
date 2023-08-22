@@ -27,9 +27,15 @@
 			<li><a href="{% url m.url_name %}">{{m.title}}</a></li>
 	
 {% endfor %}
-<li class="last">
+
+{% if request.user.is_authenticated %}
+<li class="last"> {{user.username}} | <a href="{% url 'logout' %}">Выйти</a></li>
+{% else %}
+
+				<li class="last">
 <a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Войти</a>
 </li>
+				{% endif %}
 			</ul>
 			<div class="clear"></div>
 		</div>
@@ -39,30 +45,27 @@
 <table class="table-content" border=0 cellpadding="0" cellspacing="0">
 <tr>
 <!-- Sidebar слева -->
+
+
 	<td valign="top" class="left-chapters">
 		<!-- вызовет тут функцию тега {% getcats as categories %}-->
 		
 
 	<ul id="leftchapters">
+
+
+
 {% if cat_selected == 0 %}
 		<li class="selected">Все категории</li>
 {% else %}
 		<li><a href="{% url 'main' %}">Все категории</a></li>
 {% endif %}
-<!--
-{% for c in categories %}
-	{% if c.pk == cat_selected %}
-		<li class="selected">{{c.name}}</li>
-	{% else %}
-		<li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
-	{% endif %}
-{% endfor %}
- -->
+
 
 
 <!-- тут был тег категорий -->
 	<!--передали 2 параметра функции show_categories, для фильтрации и для сортировки, cat_selected доступна из кода выше. в шаблонах лучше передавать значения параметров через присвоение для названий параметров, а не просто список значений  -->
- 
+
 {% for c in cats %}
 {% if c.home__count > 0 %}
 
@@ -74,6 +77,8 @@
 {% endif %}
 
 {% endfor %}
+
+<!-- тут конец кеша -->
 
 
 

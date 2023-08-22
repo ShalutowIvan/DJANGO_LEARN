@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home.apps.HomeConfig'
-]
+    'debug_toolbar',
+    'home.apps.HomeConfig',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -51,6 +52,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+
 ]
 
 ROOT_URLCONF = 'Mysite.urls'
@@ -135,3 +138,13 @@ MEDIA_URL = '/media/'#это добавление префикса к url гра
 
 # LOGIN_REDIRECT_URL = '/'
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'mysite_cache'),#тут указываем путь к корневой папке кеша. Мы указали путь к корневой папке проекта
+    }
+}

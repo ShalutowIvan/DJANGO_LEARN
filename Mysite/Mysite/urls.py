@@ -45,6 +45,11 @@ urlpatterns = [
 
 
 if settings.DEBUG:#в случае включенного режима дебага то есть DEBUG=True мы к маршрутам urlpatterns которые мы указали выше добавляем маршрут для статических данных графических файлов и указываем наш добавленный урл и корневую папку где будут храниться файлы, скорее всего static это функция такая. Делается это только в отладочном режиме, на реальных серверах это уже настроено, но у нас не настроено. static надо импортировать из django.conf.urls.static. DEBUG должен быть True. Теперь тестовый сервер может их брать по адресу media и отображать на html странице
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include("debug_toolbar.urls")),
+    ] + urlpatterns#тут мы добавили
+
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
